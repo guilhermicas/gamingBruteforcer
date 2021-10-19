@@ -20,12 +20,15 @@ def httpRequest(url: str):
 
     except Exception as e:
         print(f"[REQUEST EXCEPTION] ")
-        print(e)
 
 
 def main(argv):
     url = argv.u
     wordlist_path = argv.w
+
+    # argv.t is number of threads given by user, default being 100
+    max_concurrent_threads = 100 if str(
+        type(argv.t)) == "<class 'NoneType'>" else int(argv.t)
 
     # Verify if the the word GAMING is on URL word bruteforce location
     if ("GAMING" not in url):
@@ -42,6 +45,7 @@ def main(argv):
 
         # Multithread bruteforce
         thread_list = []
+        print(f"Using {max_concurrent_threads} threads")
 
         for word in wordlist:
             request_url = url.replace("GAMING", word)
@@ -51,7 +55,8 @@ def main(argv):
 
             thread_list.append(thread)
 
-            if(len(thread_list) == 100):
+            # When thread list size reaches a limit, execute all threads and wait for finish
+            if(len(thread_list) == max_concurrent_threads):
                 for t in thread_list:
                     t.start()
 
@@ -66,6 +71,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", help="URL of target", required=True)
     parser.add_argument("-w", help="Wordlist", required=True)
+    parser.add_argument("-t", help="Number of Threads to use (default 100)")
     argv = parser.parse_args()
 
     main(argv)
