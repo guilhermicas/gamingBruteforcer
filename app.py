@@ -36,22 +36,25 @@ def main(argv):
 
     # Grab the wordlist
     if not os.path.isfile(wordlist_path):
-        print('Path is not valid.')
+        return print('Path is not valid.')
     else:
         wordlist = []
 
         with open(wordlist_path, "r") as file:
             wordlist = file.read().split("\n")[:-1]
 
-        # Multithread bruteforce
         thread_list = []
         print(f"Using {max_concurrent_threads} threads")
 
         for word in wordlist:
             request_url = url.replace("GAMING", word)
 
+            # Multithread bruteforce
             thread = threading.Thread(
                 target=httpRequest, args=(request_url,))
+
+            # If the main thread dies, this thread will be die as well.
+            thread.daemon = True
 
             thread_list.append(thread)
 
