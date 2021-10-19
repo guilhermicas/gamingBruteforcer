@@ -1,6 +1,6 @@
 #!/bin/python3
 
-from os import system, path
+import os
 import threading
 import requests
 import argparse
@@ -15,7 +15,8 @@ The options should be:
 def httpRequest(url: str):
     try:
         req = requests.get(url=url)
-        print(f"[{req.status_code}] Valid url: {url}") if req.status_code in [200, 204, 301, 302, 307, 401, 403, 405]
+        if req.status_code in [200, 204, 301, 302, 307, 401, 403, 405]:
+            print(f"[{req.status_code}] Valid url: {url}")
 
     except Exception as e:
         print(f"[REQUEST EXCEPTION] ")
@@ -27,11 +28,12 @@ def main(argv):
     wordlist_path = argv.w
 
     # Verify if the the word GAMING is on URL word bruteforce location
-    return print("The word GAMING was not found on the url") if ("GAMING" not in url)
+    if ("GAMING" not in url):
+        return print("The word GAMING was not found on the url")
 
     # Grab the wordlist
-    if not os.path.isfile(filename):
-        print('File does not exist.')
+    if not os.path.isfile(wordlist_path):
+        print('Path is not valid.')
     else:
         wordlist = []
 
