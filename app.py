@@ -1,11 +1,9 @@
 #!/bin/python3
 
+from os import system, path
 import threading
-import argparse
-import re
 import requests
-import socket
-from os import system
+import argparse
 
 """
 The options should be:
@@ -16,13 +14,12 @@ The options should be:
 
 def httpRequest(url: str):
     try:
-        #formatted_url = url.split("/")[-2]
         req = requests.get(url=url)
-        if req.status_code in [200, 204, 301, 302, 307, 401, 403, 405]:
-            print(f"[{req.status_code}] Valid url: {url}")
+        print(f"[{req.status_code}] Valid url: {url}") if req.status_code in [200, 204, 301, 302, 307, 401, 403, 405]
+
     except Exception as e:
-        print(e)
         print(f"[REQUEST EXCEPTION] ")
+        print(e)
 
 
 def main(argv):
@@ -30,18 +27,21 @@ def main(argv):
     wordlist_path = argv.w
 
     # Verify if the the word GAMING is on URL word bruteforce location
-    if("GAMING" not in url):
-        print("The word GAMING was not found on the url")
-        return
+    return print("The word GAMING was not found on the url") if ("GAMING" not in url)
 
     # Grab the wordlist
-    with open(wordlist_path, "r") as file:
-        wordlist = file.read().split("\n")[:-1]
+    if not os.path.isfile(filename):
+        print('File does not exist.')
+    else:
+        wordlist = []
+
+        with open(wordlist_path, "r") as file:
+            wordlist = file.read().split("\n")[:-1]
 
         # Multithread bruteforce
         thread_list = []
 
-        for idx, word in enumerate(wordlist):
+        for word in wordlist:
             request_url = url.replace("GAMING", word)
 
             thread = threading.Thread(
